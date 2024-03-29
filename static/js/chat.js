@@ -24,7 +24,7 @@ ws.onopen = function (evt) {
 
 ws.onmessage = function (evt) {
   console.log("message", evt);
-
+  
   let msg = JSON.parse(evt.data);
   let $item = document.createElement("li");
 
@@ -60,6 +60,7 @@ function sendMessage(evt) {
   evt.preventDefault();
 
   let data = { type: "chat", text: document.querySelector("#m").value };
+  console.log('data', data);
   ws.send(JSON.stringify(data));
 
   document.querySelector("#m").value = "";

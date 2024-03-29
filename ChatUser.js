@@ -4,6 +4,7 @@
 
 // Room is an abstraction of a chat channel
 const Room = require("./Room");
+const { fetchDadJoke } = require("./api");
 
 /** ChatUser is a individual connection from client -> server to chat. */
 
@@ -28,12 +29,14 @@ class ChatUser {
    * */
 
   send(data) {
+    console.log('data', data);
     try {
       this._send(data);
     } catch {
       // If trying to send to a user fails, ignore it
     }
   }
+
 
   /** Handle joining: add to room members, announce join.
    *
@@ -72,13 +75,16 @@ class ChatUser {
    * </code>
    */
 
-  handleMessage(jsonData) {
+  async handleMessage(jsonData) {
     let msg = JSON.parse(jsonData);
 
     if (msg.type === "join") this.handleJoin(msg.name);
+    else if (msg.type === "chat" && msg.text === "/joke") this.send({ type: "chat", text: await fetchDadJoke() });
     else if (msg.type === "chat") this.handleChat(msg.text);
     else throw new Error(`bad message: ${msg.type}`);
   }
+
+
 
   /** Connection was closed: leave room, announce exit to others. */
 
